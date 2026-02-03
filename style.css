@@ -1,0 +1,1053 @@
+/* Reset e Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    background: #050505;
+    color: #fff;
+    overflow-x: hidden;
+}
+
+/* Animações */
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+@keyframes glitchText {
+    0%, 100% {
+        text-shadow: 2px 0 #ff0040, -2px 0 #00ffff;
+        transform: translate(0);
+    }
+    20% {
+        text-shadow: -3px 0 #ff0040, 3px 0 #00ffff;
+        transform: translate(-1px, 1px);
+    }
+    40% {
+        text-shadow: 3px 0 #ff0040, -3px 0 #00ffff;
+        transform: translate(1px, -1px);
+    }
+    60% {
+        text-shadow: -2px 0 #ff0040, 2px 0 #00ffff;
+        transform: translate(-1px, 0);
+    }
+    80% {
+        text-shadow: 2px 0 #ff0040, -2px 0 #00ffff;
+        transform: translate(1px, 1px);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+@keyframes scanline {
+    0% { top: -100%; }
+    100% { top: 100%; }
+}
+
+@keyframes borderGlow {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(255, 0, 64, 0.3),
+                    inset 0 0 20px rgba(255, 0, 64, 0.05);
+    }
+    50% {
+        box-shadow: 0 0 40px rgba(255, 0, 64, 0.5),
+                    inset 0 0 30px rgba(255, 0, 64, 0.1);
+    }
+}
+
+@keyframes statusPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* ==================== SPLASH SCREEN ==================== */
+.splash-screen {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    transition: opacity 1s ease, visibility 1s ease;
+    overflow: hidden;
+}
+
+.splash-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.splash-scanlines {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.3) 2px,
+        rgba(0, 0, 0, 0.3) 4px
+    );
+    pointer-events: none;
+    z-index: 1;
+}
+
+.splash-content {
+    text-align: center;
+    z-index: 10;
+    padding: 20px;
+}
+
+.splash-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(3rem, 12vw, 6rem);
+    font-weight: 400;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 20px;
+    margin-bottom: 10px;
+    text-shadow: 0 0 40px rgba(255, 0, 64, 0.3);
+}
+
+.splash-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(0.6rem, 2vw, 0.8rem);
+    color: rgba(255, 255, 255, 0.3);
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    margin-bottom: 50px;
+}
+
+.splash-terminal {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(0.7rem, 2vw, 0.85rem);
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 50px;
+    min-height: 25px;
+}
+
+.splash-terminal .prefix {
+    color: #ff0040;
+}
+
+.splash-terminal .cursor {
+    color: #ff0040;
+    animation: blink 0.7s infinite;
+}
+
+.splash-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 14px 45px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+.splash-btn:hover {
+    border-color: #ff0040;
+    color: #ff0040;
+    box-shadow: 0 0 25px rgba(255, 0, 64, 0.3);
+}
+
+.splash-quote {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(0.6rem, 1.5vw, 0.75rem);
+    color: rgba(255, 255, 255, 0.15);
+    letter-spacing: 2px;
+    margin-top: 50px;
+}
+
+/* ==================== BACKGROUND ==================== */
+.lain-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.lain-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--bg-image) center center / cover no-repeat;
+    opacity: 0.15;
+    filter: grayscale(100%) contrast(1.2);
+}
+
+.lain-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 30% 20%, rgba(255, 0, 64, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 80%, rgba(0, 200, 255, 0.1) 0%, transparent 50%),
+        linear-gradient(180deg, rgba(5, 5, 5, 0.9) 0%, rgba(5, 5, 5, 0.7) 50%, rgba(5, 5, 5, 0.95) 100%);
+}
+
+/* Overlays */
+.scanlines {
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.1) 2px,
+        rgba(0, 0, 0, 0.1) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.scanline-move {
+    position: fixed;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(180deg, transparent, rgba(255, 0, 64, 0.1), transparent);
+    animation: scanline 8s linear infinite;
+    pointer-events: none;
+    z-index: 1001;
+}
+
+.grid-overlay {
+    position: fixed;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255, 0, 64, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 0, 64, 0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ==================== PROFILES ==================== */
+.profiles-container {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 40px;
+    flex-wrap: wrap;
+    padding: 60px 20px;
+    min-height: 100vh;
+    position: relative;
+    z-index: 10;
+}
+
+.profile-card {
+    width: 380px;
+    background: rgba(10, 10, 15, 0.85);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 0, 64, 0.2);
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    animation: borderGlow 4s ease-in-out infinite;
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 0, 64, 0.4);
+}
+
+.profile-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #ff0040, #ff0040, transparent);
+}
+
+/* Card Header */
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: rgba(0, 0, 0, 0.4);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.card-dots {
+    display: flex;
+    gap: 8px;
+}
+
+.card-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.card-dot.red { background: #ff0040; box-shadow: 0 0 10px #ff0040; }
+.card-dot.yellow { background: #ffcc00; box-shadow: 0 0 10px #ffcc00; }
+.card-dot.green { background: #00ff88; box-shadow: 0 0 10px #00ff88; }
+
+.card-layer {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.3);
+    letter-spacing: 2px;
+}
+
+/* Banner */
+.profile-banner {
+    height: 110px;
+    background: linear-gradient(135deg, rgba(255, 0, 64, 0.2) 0%, rgba(0, 100, 150, 0.2) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-banner .banner-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.8;
+}
+
+.profile-banner::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(to top, rgba(10, 10, 15, 1), transparent);
+}
+
+/* Avatar */
+.avatar-wrapper {
+    position: relative;
+    height: 0;
+}
+
+.avatar-container {
+    position: absolute;
+    top: -45px;
+    left: 25px;
+    z-index: 20;
+}
+
+.profile-avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff0040, #ff4080);
+    padding: 3px;
+    position: relative;
+    animation: statusPulse 3s ease-in-out infinite;
+}
+
+.profile-avatar-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #0a0a0f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #ff0040;
+}
+
+.profile-avatar-inner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.status-indicator {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 3px solid #0a0a0f;
+    background: #444;
+}
+
+.status-indicator.online {
+    background: #00ff88;
+    box-shadow: 0 0 15px #00ff88;
+    animation: statusPulse 2s ease-in-out infinite;
+}
+
+.status-indicator.idle {
+    background: #ffcc00;
+    box-shadow: 0 0 15px #ffcc00;
+}
+
+.status-indicator.dnd {
+    background: #ff0040;
+    box-shadow: 0 0 15px #ff0040;
+}
+
+.status-indicator.offline {
+    background: #444;
+    box-shadow: none;
+}
+
+/* Profile Body */
+.profile-body {
+    padding: 55px 25px 25px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.username {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 2px;
+}
+
+.role-tag {
+    display: inline-block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    padding: 5px 12px;
+    margin-top: 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border: 1px solid;
+}
+
+.role-tag.dev {
+    color: #00d4ff;
+    border-color: rgba(0, 212, 255, 0.5);
+    background: rgba(0, 212, 255, 0.1);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+}
+
+.role-tag.hacker {
+    color: #ff0040;
+    border-color: rgba(255, 0, 64, 0.5);
+    background: rgba(255, 0, 64, 0.1);
+    box-shadow: 0 0 20px rgba(255, 0, 64, 0.2);
+}
+
+.display-name {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.35);
+    margin-top: 8px;
+}
+
+/* Sections */
+.profile-section {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(180deg, #ff0040, transparent);
+}
+
+.section-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: #ff0040;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-title::before {
+    content: '>';
+    color: rgba(255, 0, 64, 0.5);
+}
+
+.about-me {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.7;
+}
+
+/* Skills */
+.skills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.skill-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.6);
+    transition: all 0.3s ease;
+}
+
+.skill-tag:hover {
+    color: #00ff88;
+    border-color: #00ff88;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+    transform: translateY(-2px);
+}
+
+.skill-tag.highlight {
+    color: #00d4ff;
+    border-color: rgba(0, 212, 255, 0.4);
+    background: rgba(0, 212, 255, 0.1);
+}
+
+.skill-tag.hacker-highlight {
+    color: #ff0040;
+    border-color: rgba(255, 0, 64, 0.4);
+    background: rgba(255, 0, 64, 0.1);
+}
+
+/* Spotify */
+.spotify-section {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    border: 1px solid rgba(30, 215, 96, 0.2);
+    min-height: 95px;
+    position: relative;
+    overflow: hidden;
+}
+
+.spotify-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(180deg, #1db954, transparent);
+}
+
+.spotify-section.inactive {
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.spotify-section.inactive::before {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent);
+}
+
+.spotify-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.spotify-icon {
+    width: 16px;
+    height: 16px;
+    fill: #1db954;
+}
+
+.spotify-section.inactive .spotify-icon {
+    fill: rgba(255, 255, 255, 0.2);
+}
+
+.spotify-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: #1db954;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+.spotify-section.inactive .spotify-label {
+    color: rgba(255, 255, 255, 0.2);
+}
+
+.spotify-empty {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.2);
+}
+
+.spotify-content {
+    display: none;
+    align-items: center;
+    gap: 15px;
+}
+
+.spotify-section.active .spotify-content {
+    display: flex;
+}
+
+.spotify-section.active .spotify-empty {
+    display: none;
+}
+
+.spotify-cover {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+}
+
+.spotify-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.spotify-song {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.spotify-artist {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 3px;
+}
+
+/* Social Links */
+.social-links {
+    display: flex;
+    gap: 12px;
+    margin-top: auto;
+    padding-top: 20px;
+}
+
+.social-link {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.social-link:hover {
+    color: #fff;
+    border-color: #ff0040;
+    background: rgba(255, 0, 64, 0.1);
+    box-shadow: 0 0 20px rgba(255, 0, 64, 0.2);
+    transform: translateY(-2px);
+}
+
+.social-icon {
+    width: 18px;
+    height: 18px;
+}
+
+/* Volume Control */
+.volume-control {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 8px 12px;
+    border-radius: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.volume-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.volume-icon {
+    width: 20px;
+    height: 20px;
+    fill: rgba(255, 255, 255, 0.6);
+    transition: fill 0.3s ease;
+}
+
+.volume-btn:hover .volume-icon {
+    fill: #ff0040;
+}
+
+.volume-slider {
+    width: 80px;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: #ff0040;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.volume-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: #ff0040;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+}
+
+/* Watermark Quote */
+.lain-watermark {
+    position: fixed;
+    bottom: 15px;
+    right: 20px;
+    z-index: 100;
+}
+
+.watermark-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.25);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.watermark-text::before {
+    content: '> ';
+    color: rgba(255, 0, 64, 0.5);
+}
+
+.watermark-cursor {
+    color: #ff0040;
+    animation: blink 0.7s infinite;
+}
+
+/* ==================== RESPONSIVO - MOBILE ==================== */
+@media (max-width: 768px) {
+    /* Splash */
+    .splash-title {
+        letter-spacing: 12px;
+    }
+
+    .splash-sub {
+        letter-spacing: 5px;
+        margin-bottom: 40px;
+    }
+
+    .splash-terminal {
+        margin-bottom: 40px;
+    }
+
+    .splash-btn {
+        padding: 12px 35px;
+        letter-spacing: 3px;
+    }
+
+    .splash-quote {
+        margin-top: 40px;
+        padding: 0 20px;
+    }
+
+    /* Profiles */
+    .profiles-container {
+        padding: 30px 15px;
+        gap: 25px;
+        min-height: auto;
+    }
+
+    .profile-card {
+        width: 100%;
+        max-width: 380px;
+    }
+
+    .profile-body {
+        padding: 50px 18px 18px;
+    }
+
+    .username {
+        font-size: 1.3rem;
+        letter-spacing: 1px;
+    }
+
+    .role-tag {
+        font-size: 0.6rem;
+        padding: 4px 10px;
+        letter-spacing: 1px;
+    }
+
+    .display-name {
+        font-size: 0.8rem;
+    }
+
+    .profile-section {
+        padding: 12px;
+        margin-top: 15px;
+    }
+
+    .section-title {
+        font-size: 0.7rem;
+        letter-spacing: 2px;
+        margin-bottom: 10px;
+    }
+
+    .about-me {
+        font-size: 0.82rem;
+        line-height: 1.6;
+    }
+
+    .skills-grid {
+        gap: 6px;
+    }
+
+    .skill-tag {
+        font-size: 0.62rem;
+        padding: 5px 9px;
+    }
+
+    /* Spotify */
+    .spotify-section {
+        padding: 12px;
+        min-height: 85px;
+    }
+
+    .spotify-label {
+        font-size: 0.7rem;
+        letter-spacing: 2px;
+    }
+
+    .spotify-song {
+        font-size: 0.85rem;
+    }
+
+    .spotify-artist {
+        font-size: 0.75rem;
+    }
+
+    .spotify-cover {
+        width: 45px;
+        height: 45px;
+    }
+
+    /* Social */
+    .social-links {
+        gap: 10px;
+    }
+
+    .social-link {
+        padding: 10px;
+        font-size: 0.7rem;
+    }
+
+    /* Watermark */
+    .lain-watermark {
+        bottom: 10px;
+        right: 15px;
+        left: 15px;
+        text-align: center;
+    }
+
+    .watermark-text {
+        font-size: 0.65rem;
+        letter-spacing: 1px;
+    }
+
+    /* Volume control mobile */
+    .volume-control {
+        bottom: 15px;
+        left: 15px;
+        padding: 6px 10px;
+    }
+
+    .volume-slider {
+        width: 60px;
+    }
+
+    .volume-icon {
+        width: 18px;
+        height: 18px;
+    }
+
+    /* Hide effects on mobile */
+    .scanline-move,
+    .grid-overlay {
+        display: none;
+    }
+
+    .card-header {
+        padding: 10px 15px;
+    }
+
+    .card-layer {
+        font-size: 0.6rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .splash-title {
+        font-size: 2.2rem;
+        letter-spacing: 8px;
+    }
+
+    .splash-sub {
+        font-size: 0.55rem;
+        letter-spacing: 4px;
+    }
+
+    .splash-terminal {
+        font-size: 0.65rem;
+    }
+
+    .splash-btn {
+        padding: 10px 30px;
+        font-size: 0.7rem;
+    }
+
+    .splash-quote {
+        font-size: 0.55rem;
+    }
+
+    .profiles-container {
+        padding: 20px 10px;
+    }
+
+    .profile-card {
+        border-radius: 15px;
+    }
+
+    .profile-banner {
+        height: 85px;
+    }
+
+    .profile-avatar {
+        width: 70px;
+        height: 70px;
+    }
+
+    .avatar-container {
+        top: -35px;
+        left: 15px;
+    }
+
+    .profile-body {
+        padding: 40px 15px 15px;
+    }
+
+    .username {
+        font-size: 1.15rem;
+    }
+
+    .role-tag {
+        font-size: 0.55rem;
+    }
+
+    .display-name {
+        font-size: 0.75rem;
+    }
+
+    .about-me {
+        font-size: 0.78rem;
+    }
+
+    .skill-tag {
+        font-size: 0.58rem;
+        padding: 4px 8px;
+    }
+
+    .social-links {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .social-link {
+        padding: 10px;
+        font-size: 0.65rem;
+    }
+
+    .watermark-text {
+        font-size: 0.6rem;
+    }
+
+    .spotify-content {
+        gap: 10px;
+    }
+
+    .spotify-cover {
+        width: 40px;
+        height: 40px;
+    }
+
+    .spotify-song {
+        font-size: 0.8rem;
+    }
+
+    .spotify-artist {
+        font-size: 0.7rem;
+    }
+}
