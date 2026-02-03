@@ -56,28 +56,18 @@
 
     <!-- Volume Control -->
     <div class="volume-control" id="volumeControl">
-        <div class="volume-ring">
-            <svg class="volume-ring-svg" viewBox="0 0 100 100">
-                <circle class="volume-ring-bg" cx="50" cy="50" r="45"/>
-                <circle class="volume-ring-progress" id="volumeProgress" cx="50" cy="50" r="45"/>
+        <button class="volume-toggle" id="volumeBtn">
+            <svg class="volume-icon" id="volumeIcon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
             </svg>
-            <button class="volume-btn" id="volumeBtn">
-                <svg class="volume-icon" id="volumeIcon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-                </svg>
-            </button>
-        </div>
-        <div class="volume-slider-container">
-            <div class="volume-label">VOL</div>
-            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="50">
-            <div class="volume-value" id="volumeValue">50</div>
-        </div>
-        <div class="volume-bars">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
+            <svg class="volume-ring" viewBox="0 0 36 36">
+                <circle class="ring-bg" cx="18" cy="18" r="16"/>
+                <circle class="ring-fill" id="volumeRing" cx="18" cy="18" r="16"/>
+            </svg>
+        </button>
+        <div class="volume-popup" id="volumePopup">
+            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="50" orient="vertical">
+            <span class="volume-value" id="volumeValue">50</span>
         </div>
     </div>
 
@@ -365,30 +355,59 @@
         });
 
         // Volume Control
+        const volumeControl = document.getElementById('volumeControl');
         const volumeSlider = document.getElementById('volumeSlider');
         const volumeBtn = document.getElementById('volumeBtn');
         const volumeIcon = document.getElementById('volumeIcon');
+        const volumeRing = document.getElementById('volumeRing');
+        const volumeValue = document.getElementById('volumeValue');
         let isMuted = false;
         let previousVolume = 0.5;
 
-        volumeSlider.addEventListener('input', (e) => {
-            const volume = e.target.value / 100;
+        function updateVolume(value) {
+            const volume = value / 100;
             bgMusic.volume = volume;
+
+            // Update ring (100 is circumference approx)
+            const offset = 100 - value;
+            volumeRing.style.strokeDashoffset = offset;
+
+            // Update value
+            volumeValue.textContent = Math.round(value);
+
+            // Update icon
             updateVolumeIcon(volume);
+        }
+
+        volumeSlider.addEventListener('input', (e) => {
+            updateVolume(e.target.value);
+            isMuted = false;
         });
 
-        volumeBtn.addEventListener('click', () => {
+        volumeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             if (isMuted) {
-                bgMusic.volume = previousVolume;
                 volumeSlider.value = previousVolume * 100;
+                updateVolume(previousVolume * 100);
                 isMuted = false;
             } else {
-                previousVolume = bgMusic.volume;
-                bgMusic.volume = 0;
+                previousVolume = bgMusic.volume || 0.5;
                 volumeSlider.value = 0;
+                updateVolume(0);
                 isMuted = true;
             }
-            updateVolumeIcon(bgMusic.volume);
+        });
+
+        // Toggle popup on mobile
+        volumeControl.addEventListener('click', () => {
+            volumeControl.classList.toggle('active');
+        });
+
+        // Close popup when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!volumeControl.contains(e.target)) {
+                volumeControl.classList.remove('active');
+            }
         });
 
         function updateVolumeIcon(volume) {
@@ -400,6 +419,8 @@
                 volumeIcon.innerHTML = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
             }
         }
+
+        updateVolume(50);
 
         // Discord/Lanyard
         const DISCORD_IDS = ['1053131054342479902', '366604061585309697'];
